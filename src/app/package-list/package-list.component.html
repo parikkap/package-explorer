@@ -1,3 +1,7 @@
 <section>
-  {{data$ | async}}
+  <ul *ngIf="data$ | async as data">
+    <li *ngFor="let package of data">
+      {{ package | json }}
+    </li>
+  </ul>
 </section>
