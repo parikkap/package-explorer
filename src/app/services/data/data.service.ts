@@ -11,7 +11,7 @@ export class DataService {
 
   constructor(private http: HttpClient) {}
 
-  get packageData() {
+  get packageData$() {
     return this.http.get(this.url, {responseType: 'text'});
   }
 }

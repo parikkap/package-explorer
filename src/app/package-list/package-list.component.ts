@@ -15,7 +15,7 @@ export class PackageListComponent implements OnInit {
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.packageData$ = this.dataService.packageData.pipe(
+    this.packageData$ = this.dataService.packageData$.pipe(
       map((rawText) =>
         this.constructPackageArray(rawText).sort((a: Package, b: Package) =>
           a.package.toLowerCase().localeCompare(b.package.toLowerCase()),
