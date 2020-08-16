@@ -16,25 +16,22 @@ export class PackageListComponent implements OnInit {
   ngOnInit(): void {
     this.data$ = this.dataService.packageData.pipe(
       map((rawText) => {
-
         const splitByPackage = rawText.split('\n\n');
         const packagePairsMatrix = splitByPackage.map((rawPackage) =>
           rawPackage.split(/^(?=\w\D*:)/m),
         );
 
         const packageArray = packagePairsMatrix.map((pack) => {
-          const keyValuePair = pack.map((pair) => {
+          const packageObj = {};
+          pack.forEach((pair) => {
             const pairArray = pair.split(/:\s{1}(?=\w)/);
-
-            return {
-              [pairArray[0]]: pairArray[1],
-            };
+            packageObj[pairArray[0].toLowerCase()] = pairArray[1];
           });
-
-          return { ...keyValuePair };
+          return { ...packageObj };
         });
-        return packageArray;
+        return packageArray.map(item => console.log(item))
       }),
     );
+    // this.data$.subscribe((item) => console.log(item));
   }
 }
