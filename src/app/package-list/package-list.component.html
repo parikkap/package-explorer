@@ -1,0 +1,7 @@
+<section>
+  <ul *ngIf="packageData$ | async as packageData">
+    <li *ngFor="let package of packageData">
+      {{ package.package }}
+    </li>
+  </ul>
+</section>
