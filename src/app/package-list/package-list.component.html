@@ -1,7 +1,7 @@
 <section>
-  <ul *ngIf="data$ | async as data">
-    <!-- <li *ngFor="let package of data">
-      {{ package | json }}
-    </li> -->
+  <ul *ngIf="packageData$ | async as packageData">
+    <li *ngFor="let package of packageData">
+      {{ package.package }}
+    </li>
   </ul>
 </section>
