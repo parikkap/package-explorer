@@ -24,7 +24,6 @@ export class PackageService {
   }
 
   private constructPackageArray(rawText: string): Array<Partial<Package>> {
-    // const raw = rawText.replace(this.removePackageVersionReg, ' ');
     const splitByPackage = rawText.split('\n\n');
     const packagePairsMatrix = splitByPackage.map((rawPackage) =>
       rawPackage.split(this.splitByNewKeyRowReg),
@@ -35,11 +34,9 @@ export class PackageService {
       const packageObj = {};
       pack.forEach((pair) => {
         const pairArray = pair.split(this.splitTokeyValuePairReg);
-        // console.log(pairArray);
 
         if (pairArray[0] === 'Depends') {
           pairArray[1] = pairArray[1].replace(this.removePackageVersionReg, ' ');
-          console.log('jej')
         }
         packageObj[pairArray[0].toLowerCase()] = pairArray[1];
       });
@@ -56,6 +53,10 @@ export class PackageService {
         ),
       ),
     );
+  }
+
+  private createReverseDependencies() {
+
   }
 
   get constructedPackageData$(): Observable<Package[]> {
