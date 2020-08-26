@@ -1,4 +1,5 @@
 <section>
+  <h1>Package List</h1>
   <ul *ngIf="constructedPackageData$ | async as packageData">
     <li *ngFor="let package of packageData">
       <a [routerLink]="package.package" routerLinkActive="is-active">

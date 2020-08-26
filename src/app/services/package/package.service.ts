@@ -9,6 +9,9 @@ import { Package } from '../../models/package';
 })
 export class PackageService {
   private packageData$: Observable<any>;
+  private removePackageVersionReg = /\s\(([^)]+)\)/g;
+  private splitByNewKeyRowReg = /^(?=\w\D*:)/m;
+  private splitTokeyValuePairReg = /:\s{1}(?=\w)/;
 
   constructor(private dataService: DataService) {
     this.packageData$ = this.dataService.packageData$.pipe(
@@ -21,16 +24,23 @@ export class PackageService {
   }
 
   private constructPackageArray(rawText: string): Array<Partial<Package>> {
+    // const raw = rawText.replace(this.removePackageVersionReg, ' ');
     const splitByPackage = rawText.split('\n\n');
     const packagePairsMatrix = splitByPackage.map((rawPackage) =>
-      rawPackage.split(/^(?=\w\D*:)/m),
+      rawPackage.split(this.splitByNewKeyRowReg),
     );
     // Remove last item that is undefined
     packagePairsMatrix.pop();
     const packageArray = packagePairsMatrix.map((pack) => {
       const packageObj = {};
       pack.forEach((pair) => {
-        const pairArray = pair.split(/:\s{1}(?=\w)/);
+        const pairArray = pair.split(this.splitTokeyValuePairReg);
+        // console.log(pairArray);
+
+        if (pairArray[0] === 'Depends') {
+          pairArray[1] = pairArray[1].replace(this.removePackageVersionReg, ' ');
+          console.log('jej')
+        }
         packageObj[pairArray[0].toLowerCase()] = pairArray[1];
       });
       return { ...packageObj };
