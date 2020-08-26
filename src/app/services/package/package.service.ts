@@ -8,7 +8,17 @@ import { Package } from '../../models/package';
   providedIn: 'root',
 })
 export class PackageService {
-  constructor(private dataService: DataService) {}
+  private packageData$: Observable<any>;
+
+  constructor(private dataService: DataService) {
+    this.packageData$ = this.dataService.packageData$.pipe(
+      map((rawText) =>
+        this.constructPackageArray(rawText).sort((a: Package, b: Package) =>
+          a.package.toLowerCase().localeCompare(b.package.toLowerCase()),
+        ),
+      ),
+    );
+  }
 
   private constructPackageArray(rawText: string): Array<Partial<Package>> {
     const splitByPackage = rawText.split('\n\n');
@@ -28,13 +38,17 @@ export class PackageService {
     return packageArray;
   }
 
-  get constructedPackageData$() {
-    return this.dataService.packageData$.pipe(
-      map((rawText) =>
-        this.constructPackageArray(rawText).sort((a: Package, b: Package) =>
-          a.package.toLowerCase().localeCompare(b.package.toLowerCase()),
+  public getPackageByName(name: string): Observable<Package> {
+    return this.packageData$.pipe(
+      map((packageArray: Package[]) =>
+        packageArray.find(
+          (singlePackage: Package) => singlePackage.package === name,
         ),
       ),
     );
+  }
+
+  get constructedPackageData$(): Observable<Package[]> {
+    return this.packageData$;
   }
 }
