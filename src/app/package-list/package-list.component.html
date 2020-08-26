@@ -1,7 +1,9 @@
 <section>
   <ul *ngIf="constructedPackageData$ | async as packageData">
     <li *ngFor="let package of packageData">
-      {{ package.package }}
+      <a [routerLink]="package.package" routerLinkActive="is-active">
+        {{ package.package }}
+      </a>
     </li>
   </ul>
 </section>

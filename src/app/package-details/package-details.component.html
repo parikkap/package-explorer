@@ -1,0 +1,6 @@
+<div *ngIf="singlePackage$ | async as singlePackage">
+  <p>Name: {{ singlePackage.package }}</p>
+  <p>Description: {{ singlePackage.description }}</p>
+  <p>Dependecies: {{ singlePackage.depends }}</p> Remove version numbers
+  <p>Reverse dependencies</p>
+</div>
