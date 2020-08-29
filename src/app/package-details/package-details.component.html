@@ -3,12 +3,18 @@
   <p>Description: {{ singlePackage.description }}</p>
   <p *ngIf="singlePackage.depends">
     Dependecies:
-    <span *ngFor="let dep of singlePackage.depends">{{ dep }}, </span>
+    <span *ngFor="let dep of singlePackage.depends; let last = last"
+      >{{ dep }}<span *ngIf="!last">, </span>
+    </span>
   </p>
   <p *ngIf="singlePackage.reverseDepends">
     Reverse dependencies:
-    <span *ngFor="let reverseDepends of singlePackage.reverseDepends"
-      >{{ reverseDepends }},
+    <span
+      *ngFor="
+        let reverseDepends of singlePackage.reverseDepends;
+        let last = last
+      "
+      >{{ reverseDepends }}<span *ngIf="!last">, </span>
     </span>
   </p>
 </div>

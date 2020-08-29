@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { DataService } from '../data/data.service';
 import { map, single } from 'rxjs/operators';
 import { Package } from '../../models/package';
+import { reverse } from 'dns';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +35,7 @@ export class PackageService {
   }
 
   private constructPackageArray(rawText: string) {
-    let reverseDeps = {};
+    const reverseDeps = {};
     const splitByPackage = rawText.split('\n\n');
     const packagePairsMatrix = splitByPackage.map((rawPackage) =>
       rawPackage.split(this.splitByNewKeyRowReg),
@@ -60,47 +61,55 @@ export class PackageService {
       let dependsWithPackage;
 
       if (depends) {
-        dependsWithPackage = (depends as string[]).map((dep) => {
-          if (dep.split('|').length > 1) {
-            const altDeps = dep.split('|');
-            const mainDep = altDeps.shift();
-
-            const depsThatExists = altDeps
-              .map((altdep) => {
-                return checkIfPackageExists(altdep.trim(), packageArray);
-              })
-              .filter((item) => item !== null);
-            depsThatExists.unshift(mainDep.trim());
-            return depsThatExists;
-          } else {
-            return dep;
-          }
-        });
+        dependsWithPackage = this.checkAltDependencies(
+          depends as string[],
+          packageArray,
+        );
       }
 
       const flattenedDepends = [].concat.apply([], dependsWithPackage);
-      // console.log(flattenedDepends);
-      singlePackage.depends = flattenedDepends;
-      // Create reverse deps after deps are created
-      reverseDeps = this.createReverseDeps(flattenedDepends, singlePackage);
+      singlePackage = { ...singlePackage, depends: flattenedDepends };
+
+      flattenedDepends.forEach((dep) => {
+        if (reverseDeps[dep]) {
+          reverseDeps[dep].push(singlePackage.package);
+        } else {
+          reverseDeps[dep] = [singlePackage.package];
+        }
+      });
     });
-    console.log(reverseDeps);
 
     return this.mapReverseDepsToPackageArray(packageArray, reverseDeps);
+  }
 
-    function checkIfPackageExists(altDep: string, packArray) {
-      const isInPackage = packArray.find(
-        (singlePackage: Package) => singlePackage.package === altDep,
-      );
-      return isInPackage ? isInPackage.package : null;
-    }
+  private checkAltDependencies(depends: string[], packageArray) {
+    return (depends as string[]).map((dep) => {
+      if (dep.split('|').length > 1) {
+        const altDeps = dep.split('|');
+        const mainDep = altDeps.shift();
+
+        const depsThatExists = altDeps
+          .map((altdep) => {
+            return this.checkIfPackageExists(altdep.trim(), packageArray);
+          })
+          .filter((item) => item !== null);
+        depsThatExists.unshift(mainDep.trim());
+        return depsThatExists;
+      } else {
+        return dep;
+      }
+    });
+  }
+  private checkIfPackageExists(altDep: string, packArray) {
+    const isInPackage = packArray.find(
+      (singlePackage: Package) => singlePackage.package === altDep,
+    );
+    return isInPackage ? isInPackage.package : null;
   }
 
   private mapReverseDepsToPackageArray(packageArray, reverseDeps) {
     return packageArray.map((pack) => {
       if (reverseDeps[pack.package]) {
-        console.log(pack.package);
-        console.log('reverse');
         return { ...pack, reverseDepends: reverseDeps[pack.package] };
       } else {
         return pack;
