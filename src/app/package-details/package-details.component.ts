@@ -21,8 +21,6 @@ export class PackageDetailsComponent implements OnInit {
       filter((params) => !!params.name),
       switchMap((item) => this.packageService.getPackageByName(item.name)),
     );
-
-    this.singlePackage$.subscribe((item) => console.log(item));
   }
 
   ngOnInit(): void {}
