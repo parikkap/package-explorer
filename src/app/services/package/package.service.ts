@@ -133,17 +133,6 @@ export class PackageService {
     return packageObj;
   }
 
-  private createReverseDeps(depends, packageObj): {} {
-    const reverseDeps = {};
-    depends.forEach((dep) => {
-      if (reverseDeps[dep]) {
-        reverseDeps[dep].push(packageObj.package);
-      } else {
-        reverseDeps[dep] = [packageObj.package];
-      }
-    });
-    return reverseDeps;
-  }
   get constructedPackageData$(): Observable<Package[]> {
     return this.packageData$;
   }
