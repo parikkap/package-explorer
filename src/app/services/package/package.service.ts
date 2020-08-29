@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DataService } from '../data/data.service';
-import { map } from 'rxjs/operators';
+import { map, single } from 'rxjs/operators';
 import { Package } from '../../models/package';
+import { reverse } from 'dns';
 
 @Injectable({
   providedIn: 'root',
@@ -23,31 +24,6 @@ export class PackageService {
     );
   }
 
-  private constructPackageArray(rawText: string): Array<Partial<Package>> {
-    // const raw = rawText.replace(this.removePackageVersionReg, ' ');
-    const splitByPackage = rawText.split('\n\n');
-    const packagePairsMatrix = splitByPackage.map((rawPackage) =>
-      rawPackage.split(this.splitByNewKeyRowReg),
-    );
-    // Remove last item that is undefined
-    packagePairsMatrix.pop();
-    const packageArray = packagePairsMatrix.map((pack) => {
-      const packageObj = {};
-      pack.forEach((pair) => {
-        const pairArray = pair.split(this.splitTokeyValuePairReg);
-        // console.log(pairArray);
-
-        if (pairArray[0] === 'Depends') {
-          pairArray[1] = pairArray[1].replace(this.removePackageVersionReg, ' ');
-          console.log('jej')
-        }
-        packageObj[pairArray[0].toLowerCase()] = pairArray[1];
-      });
-      return { ...packageObj };
-    });
-    return packageArray;
-  }
-
   public getPackageByName(name: string): Observable<Package> {
     return this.packageData$.pipe(
       map((packageArray: Package[]) =>
@@ -56,6 +32,105 @@ export class PackageService {
         ),
       ),
     );
+  }
+
+  private constructPackageArray(rawText: string) {
+    const reverseDeps = {};
+    const splitByPackage = rawText.split('\n\n');
+    const packagePairsMatrix = splitByPackage.map((rawPackage) =>
+      rawPackage.split(this.splitByNewKeyRowReg),
+    );
+    // Remove last item that is undefined
+    packagePairsMatrix.pop();
+    const packageArray = packagePairsMatrix.map((pack) => {
+      const packageObj = this.createPackageObject(pack);
+
+      if (packageObj && packageObj.depends) {
+        const depends = (packageObj.depends as string)
+          .split(',')
+          .map((item) => item.trim());
+
+        return { ...packageObj, depends };
+      } else {
+        return { ...packageObj };
+      }
+    });
+
+    packageArray.forEach((singlePackage: Package) => {
+      const depends = singlePackage.depends;
+      let dependsWithPackage;
+
+      if (depends) {
+        dependsWithPackage = this.checkAltDependencies(
+          depends as string[],
+          packageArray,
+        );
+      }
+
+      const flattenedDepends = [].concat.apply([], dependsWithPackage);
+      singlePackage = { ...singlePackage, depends: flattenedDepends };
+
+      flattenedDepends.forEach((dep) => {
+        if (reverseDeps[dep]) {
+          reverseDeps[dep].push(singlePackage.package);
+        } else {
+          reverseDeps[dep] = [singlePackage.package];
+        }
+      });
+    });
+
+    return this.mapReverseDepsToPackageArray(packageArray, reverseDeps);
+  }
+
+  private checkAltDependencies(depends: string[], packageArray) {
+    return (depends as string[]).map((dep) => {
+      if (dep.split('|').length > 1) {
+        const altDeps = dep.split('|');
+        const mainDep = altDeps.shift();
+
+        const depsThatExists = altDeps
+          .map((altdep) => {
+            return this.checkIfPackageExists(altdep.trim(), packageArray);
+          })
+          .filter((item) => item !== null);
+        depsThatExists.unshift(mainDep.trim());
+        return depsThatExists;
+      } else {
+        return dep;
+      }
+    });
+  }
+  private checkIfPackageExists(altDep: string, packArray) {
+    const isInPackage = packArray.find(
+      (singlePackage: Package) => singlePackage.package === altDep,
+    );
+    return isInPackage ? isInPackage.package : null;
+  }
+
+  private mapReverseDepsToPackageArray(packageArray, reverseDeps) {
+    return packageArray.map((pack) => {
+      if (reverseDeps[pack.package]) {
+        return { ...pack, reverseDepends: reverseDeps[pack.package] };
+      } else {
+        return pack;
+      }
+    });
+  }
+
+  private createPackageObject(singlePackage) {
+    const packageObj: Partial<Package> = {};
+    singlePackage.forEach((pair) => {
+      const pairArray = pair.split(this.splitTokeyValuePairReg);
+
+      if (pairArray[0] === 'Depends') {
+        pairArray[1] = pairArray[1].replace(this.removePackageVersionReg, ' ');
+      }
+      if (pairArray[0] === 'Package') {
+        pairArray[1] = pairArray[1].trim();
+      }
+      packageObj[pairArray[0].toLowerCase()] = pairArray[1];
+    });
+    return packageObj;
   }
 
   get constructedPackageData$(): Observable<Package[]> {
