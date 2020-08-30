@@ -4,22 +4,19 @@
 </div>
 <div *ngIf="singlePackage$ | async as singlePackage">
   <p>Name: {{ singlePackage.package }}</p>
-  <span>Description:</span> <p>{{ singlePackage.description }}</p>
+  <span>Description:</span>
+  <p>{{ singlePackage.description }}</p>
   <p *ngIf="singlePackage.depends">
     Dependecies:
-    <span *ngFor="let dep of singlePackage.depends; let last = last">
-      {{dep | json  }}
-      <!-- Why is this not working like intended
-      How to get reverse depndecies also true or false
-      -->
+    <span *ngFor="let depend of singlePackage.depends; let last = last">
       <a
-        *ngIf="dep.link"
+        *ngIf="depend.link"
         [routerLink]=""
-        [queryParams]="{ packageName: dep.name }"
+        [queryParams]="{ packageName: depend.name }"
         routerLinkActive="is-active"
-        >{{ dep.name }}
+        >{{ depend.name }}
       </a>
-      <span *ngIf="!dep.link">{{ dep.name }}</span>
+      <span *ngIf="!depend.link">{{ depend.name }}</span>
       <span *ngIf="!last">, </span>
     </span>
   </p>
@@ -32,12 +29,14 @@
       "
     >
       <a
+        *ngIf="reverseDepends.link"
         [routerLink]=""
-        [queryParams]="{ packageName: reverseDepends }"
+        [queryParams]="{ packageName: reverseDepends.name }"
         routerLinkActive="is-active"
       >
-        {{ reverseDepends }}
+        {{ reverseDepends.name }}
       </a>
+      <span *ngIf="!reverseDepends.link">{{ reverseDepends.name }}</span>
       <span *ngIf="!last">, </span>
     </span>
   </p>
