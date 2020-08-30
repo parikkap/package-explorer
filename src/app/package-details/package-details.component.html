@@ -1,10 +1,20 @@
+<div class="navigation-buttons">
+  <button class="button list-button" routerLink="">Back to package list</button>
+  <button class="button" (click)="getPreviousRoute()">Previous view</button>
+</div>
 <div *ngIf="singlePackage$ | async as singlePackage">
   <p>Name: {{ singlePackage.package }}</p>
-  <p>Description: {{ singlePackage.description }}</p>
+  <span>Description:</span> <p>{{ singlePackage.description }}</p>
   <p *ngIf="singlePackage.depends">
     Dependecies:
-    <span *ngFor="let dep of singlePackage.depends; let last = last"
-      >{{ dep }}<span *ngIf="!last">, </span>
+    <span *ngFor="let dep of singlePackage.depends; let last = last">
+      <a
+        [routerLink]=""
+        [queryParams]="{ packageName: dep }"
+        routerLinkActive="is-active"
+        >{{ dep }}
+      </a>
+      <span *ngIf="!last">, </span>
     </span>
   </p>
   <p *ngIf="singlePackage.reverseDepends">
@@ -14,7 +24,15 @@
         let reverseDepends of singlePackage.reverseDepends;
         let last = last
       "
-      >{{ reverseDepends }}<span *ngIf="!last">, </span>
+    >
+      <a
+        [routerLink]=""
+        [queryParams]="{ packageName: reverseDepends }"
+        routerLinkActive="is-active"
+      >
+        {{ reverseDepends }}
+      </a>
+      <span *ngIf="!last">, </span>
     </span>
   </p>
 </div>

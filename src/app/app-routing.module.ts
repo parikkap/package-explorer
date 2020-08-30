@@ -5,7 +5,7 @@ import { PackageDetailsComponent } from './package-details/package-details.compo
 
 const routes: Routes = [
   { path: '', component: PackageListComponent },
-  { path: ':name', component: PackageDetailsComponent },
+  { path: 'package-details', component: PackageDetailsComponent },
 ];
 
 @NgModule({

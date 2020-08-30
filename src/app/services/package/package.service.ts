@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DataService } from '../data/data.service';
-import { map, single } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Package } from '../../models/package';
-import { reverse } from 'dns';
 
 @Injectable({
   providedIn: 'root',
