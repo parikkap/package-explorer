@@ -65,37 +65,56 @@ export class PackageService {
           packageArray,
         );
       }
-
       const flattenedDepends = [].concat.apply([], dependsWithPackage);
       singlePackage = { ...singlePackage, depends: flattenedDepends };
-
       flattenedDepends.forEach((dep) => {
-        if (reverseDeps[dep]) {
-          reverseDeps[dep].push(singlePackage.package);
+        if (reverseDeps[dep.name]) {
+          reverseDeps[dep.name].push(singlePackage.package);
         } else {
-          reverseDeps[dep] = [singlePackage.package];
+          reverseDeps[dep.name] = [singlePackage.package];
         }
       });
     });
-
-    return this.mapReverseDepsToPackageArray(packageArray, reverseDeps);
+    return packageArray;
+    // return this.mapReverseDepsToPackageArray(packageArray, reverseDeps);
   }
 
   private checkAltDependencies(depends: string[], packageArray) {
     return (depends as string[]).map((dep) => {
+      let dependencyObject = { name: '', link: false};
       if (dep.split('|').length > 1) {
         const altDeps = dep.split('|');
-        const mainDep = altDeps.shift();
+        // const mainDep = altDeps.shift();
 
-        const depsThatExists = altDeps
-          .map((altdep) => {
-            return this.checkIfPackageExists(altdep.trim(), packageArray);
-          })
-          .filter((item) => item !== null);
-        depsThatExists.unshift(mainDep.trim());
+        const depsThatExists = altDeps.map((altdep) => {
+          const altDependency = altdep.trim();
+          dependencyObject = { name: '', link: false};
+          dependencyObject.name = altDependency;
+
+          const packageExists = this.checkIfPackageExists(
+            altDependency,
+            packageArray,
+          );
+
+          if (packageExists) {
+            dependencyObject.link = true;
+          }
+
+          return { ...dependencyObject };
+        });
+        console.log(depsThatExists);
         return depsThatExists;
       } else {
-        return dep;
+        dependencyObject.name = dep;
+        const packageExists = this.checkIfPackageExists(
+          dep,
+          packageArray,
+        );
+
+        if (packageExists) {
+          dependencyObject.link = true;
+        }
+        return dependencyObject;
       }
     });
   }
@@ -103,10 +122,11 @@ export class PackageService {
     const isInPackage = packArray.find(
       (singlePackage: Package) => singlePackage.package === altDep,
     );
-    return isInPackage ? isInPackage.package : null;
+    return isInPackage ? true : false;
   }
 
   private mapReverseDepsToPackageArray(packageArray, reverseDeps) {
+    console.log(reverseDeps)
     return packageArray.map((pack) => {
       if (reverseDeps[pack.package]) {
         return { ...pack, reverseDepends: reverseDeps[pack.package] };

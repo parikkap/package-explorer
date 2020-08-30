@@ -8,12 +8,18 @@
   <p *ngIf="singlePackage.depends">
     Dependecies:
     <span *ngFor="let dep of singlePackage.depends; let last = last">
+      {{dep | json  }}
+      <!-- Why is this not working like intended
+      How to get reverse depndecies also true or false
+      -->
       <a
+        *ngIf="dep.link"
         [routerLink]=""
-        [queryParams]="{ packageName: dep }"
+        [queryParams]="{ packageName: dep.name }"
         routerLinkActive="is-active"
-        >{{ dep }}
+        >{{ dep.name }}
       </a>
+      <span *ngIf="!dep.link">{{ dep.name }}</span>
       <span *ngIf="!last">, </span>
     </span>
   </p>
