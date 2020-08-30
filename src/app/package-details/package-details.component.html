@@ -2,7 +2,7 @@
   <button class="button list-button" routerLink="">Back to package list</button>
   <button class="button" (click)="getPreviousRoute()">Previous view</button>
 </div>
-<div *ngIf="singlePackage$ | async as singlePackage">
+<div class="package-details" *ngIf="singlePackage$ | async as singlePackage">
   <p>Name: {{ singlePackage.package }}</p>
   <span>Description:</span>
   <p>{{ singlePackage.description }}</p>
