@@ -11,7 +11,7 @@ import { PackageDetailsComponent } from './package-details/package-details.compo
   declarations: [
     AppComponent,
     PackageListComponent,
-    PackageDetailsComponent
+    PackageDetailsComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,9 +1,9 @@
 <section>
   <h1>Package List</h1>
   <ul *ngIf="constructedPackageData$ | async as packageData">
-    <li *ngFor="let package of packageData">
-      <a [routerLink]="package.package" routerLinkActive="is-active">
-        {{ package.package }}
+    <li *ngFor="let singlePackage of packageData">
+      <a [routerLink]="'package-details/'" [queryParams]="{ packageName: singlePackage.package }" routerLinkActive="is-active">
+        {{ singlePackage.package }}
       </a>
     </li>
   </ul>

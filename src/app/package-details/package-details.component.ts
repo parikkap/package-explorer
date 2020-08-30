@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { map, filter, switchMap } from 'rxjs/operators';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { filter, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { PackageService } from '../services/package/package.service';
+import { PreviousRouteService } from '../services/previous-route/previous-route.service';
 
 @Component({
   selector: 'app-package-details',
@@ -11,17 +12,28 @@ import { PackageService } from '../services/package/package.service';
 })
 export class PackageDetailsComponent implements OnInit {
   public singlePackage$: Observable<any>;
+  private previousUrl: string;
 
   constructor(
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
     private packageService: PackageService,
+    private previousRouteService: PreviousRouteService
   ) {
-    this.singlePackage$ = this.route.params.pipe(
+  }
+
+  ngOnInit(): void {
+    this.singlePackage$ = this.activatedRoute.queryParams.pipe(
       filter((params) => !!params),
-      filter((params) => !!params.name),
-      switchMap((item) => this.packageService.getPackageByName(item.name)),
+      filter((params) => !!params.packageName),
+      switchMap((item) => {
+        return this.packageService.getPackageByName(item.packageName);
+      }),
     );
   }
 
-  ngOnInit(): void {}
+  getPreviousRoute() {
+    this.previousUrl = this.previousRouteService.getPreviousUrl();
+    this.router.navigateByUrl(this.previousUrl);
+  }
 }

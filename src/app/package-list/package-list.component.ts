@@ -15,7 +15,5 @@ export class PackageListComponent implements OnInit {
 
   ngOnInit(): void {
     this.constructedPackageData$ = this.packageService.constructedPackageData$;
-
-    this.constructedPackageData$.subscribe(item => console.log(item))
   }
 }

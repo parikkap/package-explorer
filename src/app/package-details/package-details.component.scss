@@ -1,0 +1,13 @@
+.navigation-buttons {
+  display: flex;
+  flex-direction: column;
+  width: 10rem;
+
+  .button {
+    padding: 0.5rem 1rem;
+  }
+
+  .list-button {
+    margin-bottom: 0.5rem;
+  }
+}
