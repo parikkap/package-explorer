@@ -24,13 +24,15 @@
       <h2 class="package-heading">Dependencies:</h2>
       <p class="package-paragraph">
         <span *ngFor="let depend of singlePackage.depends; let last = last">
-          <a
+          <button
+            class="package-button"
             *ngIf="depend.link"
             [routerLink]=""
             [queryParams]="{ packageName: depend.name }"
             routerLinkActive="is-active"
-            >{{ depend.name }}
-          </a>
+          >
+            {{ depend.name }}
+          </button>
           <span *ngIf="!depend.link">{{ depend.name }}</span>
           <span *ngIf="!last">, </span>
         </span>
@@ -45,14 +47,15 @@
             let last = last
           "
         >
-          <a
+          <button
+            class="package-button"
             *ngIf="reverseDepends.link"
             [routerLink]=""
             [queryParams]="{ packageName: reverseDepends.name }"
             routerLinkActive="is-active"
           >
             {{ reverseDepends.name }}
-          </a>
+          </button>
           <span *ngIf="!reverseDepends.link">{{ reverseDepends.name }}</span>
           <span *ngIf="!last">, </span>
         </span>

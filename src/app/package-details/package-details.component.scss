@@ -35,9 +35,23 @@ $light-grey: #d3d3de;
     .property {
       display: flex;
       flex-direction: row;
-      align-items: center;
       border-bottom: 1px solid $light-grey;
       padding: 1rem 0;
+
+      .package-button {
+        padding: 0.2em;
+        background: transparent;
+        border: transparent;
+        text-align: left;
+        text-decoration: underline;
+        color:rgb(0, 0, 238);
+
+        &:hover,
+        &:focus {
+          color: green;
+          text-decoration-color:green;
+        }
+      }
     }
     .package-heading {
       font-size: 2rem;
