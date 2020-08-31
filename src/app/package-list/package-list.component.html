@@ -1,10 +1,13 @@
-<section>
-  <h1>Package List</h1>
-  <ul class="list" *ngIf="constructedPackageData$ | async as packageData">
-    <li *ngFor="let singlePackage of packageData">
-      <a [routerLink]="'package-details/'" [queryParams]="{ packageName: singlePackage.package }" routerLinkActive="is-active">
-        {{ singlePackage.package }}
-      </a>
-    </li>
-  </ul>
-</section>
+<h1 class="heading">Package List</h1>
+<ul class="list" *ngIf="constructedPackageData$ | async as packageData">
+  <li class="list-item" *ngFor="let singlePackage of packageData">
+    <button
+      class="package-button"
+      [routerLink]="'package-details/'"
+      [queryParams]="{ packageName: singlePackage.package }"
+      routerLinkActive="is-active"
+    >
+      {{ singlePackage.package }}
+    </button>
+  </li>
+</ul>

@@ -1,16 +1,53 @@
+$light-grey: #d3d3de;
+
 .package-details {
-  max-width: 60rem;
-}
-.navigation-buttons {
-  display: flex;
-  flex-direction: column;
-  width: 10rem;
+  .header {
+    display: flex;
+    flex-direction: row;
+    min-height: 8rem;
+    background-color: $light-grey;
 
-  .button {
-    padding: 0.5rem 1rem;
+    .name-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: $light-grey;
+      width: 100%;
+    }
+    .navigation-buttons {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      width: 10rem;
+
+      .button {
+        padding: 0.5rem 1rem;
+      }
+      .list-button {
+        margin-bottom: 0.5rem;
+      }
+    }
   }
+  .package-details-info {
+    padding: 1rem 3rem;
 
-  .list-button {
-    margin-bottom: 0.5rem;
+    .property {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border-bottom: 1px solid $light-grey;
+      padding: 1rem 0;
+    }
+    .package-heading {
+      font-size: 2rem;
+      flex: 0 1 10%;
+      margin-top: 0;
+    }
+
+    .package-paragraph {
+      flex: 0 1 80%;
+      padding-left: 2rem;
+    }
   }
 }

@@ -1,4 +1,31 @@
+.heading {
+  text-align: center;
+}
 .list {
   list-style: none;
   padding-left: 0.5rem;
+  display: flex;
+  flex-flow: row wrap;
+
+  .list-item {
+    // border-left: 1px solid black;
+    padding: 0.2rem 0;
+    width: 12rem;
+  }
+
+  .package-button {
+    padding: 0.2em;
+    background: transparent;
+    border: transparent;
+    border-bottom: 1px solid black;
+    text-align: left;
+
+    &:hover,
+    &:focus {
+      color: green;
+      border-bottom: 1px solid green;
+      -moz-box-shadow: 0px 1px 0px green;
+      box-shadow: 0px 1px 0px green;
+    }
+  }
 }
