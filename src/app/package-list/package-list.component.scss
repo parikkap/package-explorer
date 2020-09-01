@@ -2,15 +2,15 @@
   text-align: center;
 }
 .list {
+  -webkit-column-width:12em;
+  -moz-column-width: 12em;
+  column-width: 12em;
+
   list-style: none;
   padding-left: 0.5rem;
-  display: flex;
-  flex-flow: row wrap;
 
   .list-item {
-    // border-left: 1px solid black;
     padding: 0.2rem 0;
-    width: 12rem;
   }
 
   .package-button {
